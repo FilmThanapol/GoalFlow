@@ -5,14 +5,16 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { 
-  Star, 
-  Calendar, 
-  CheckCircle2, 
-  Circle, 
+import {
+  Star,
+  Calendar,
+  CheckCircle2,
+  Circle,
   MoreVertical,
   Edit,
-  Trash2
+  Trash2,
+  AlertTriangle,
+  Clock
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -21,6 +23,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { format } from 'date-fns';
+import { useNotifications } from '@/hooks/useNotifications';
 
 interface GoalCardProps {
   goal: Goal;
@@ -41,6 +44,8 @@ const GoalCard: React.FC<GoalCardProps> = ({
 }) => {
   const progress = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
   const isCompleted = goal.is_completed || progress === 100;
+  const { getGoalStatus, getStatusColor, getStatusText } = useNotifications([goal]);
+  const goalStatus = getGoalStatus(goal);
 
   const getCategoryColor = (category: string) => {
     const colors = {
@@ -57,7 +62,9 @@ const GoalCard: React.FC<GoalCardProps> = ({
   return (
     <Card className={`transition-all duration-200 hover:shadow-lg ${
       isCompleted ? 'ring-2 ring-green-200 dark:ring-green-800' : ''
-    } ${goal.is_favorite ? 'ring-2 ring-yellow-200 dark:ring-yellow-800' : ''}`}>
+    } ${goal.is_favorite ? 'ring-2 ring-yellow-200 dark:ring-yellow-800' : ''} ${
+      goalStatus === 'overdue' ? 'ring-2 ring-red-300 dark:ring-red-700' : ''
+    } ${goalStatus === 'due-today' ? 'ring-2 ring-orange-300 dark:ring-orange-700' : ''}`}>
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
           <div className="flex-1">
@@ -125,9 +132,18 @@ const GoalCard: React.FC<GoalCardProps> = ({
         </div>
         
         {goal.target_date && (
-          <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
-            <Calendar className="w-4 h-4" />
-            <span>Due: {format(new Date(goal.target_date), 'MMM dd, yyyy')}</span>
+          <div className="space-y-2">
+            <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
+              <Calendar className="w-4 h-4" />
+              <span>Due: {format(new Date(goal.target_date), 'MMM dd, yyyy')}</span>
+            </div>
+            {goalStatus !== 'no-deadline' && goalStatus !== 'completed' && (
+              <Badge className={`text-xs ${getStatusColor(goalStatus)}`}>
+                {goalStatus === 'overdue' && <AlertTriangle className="w-3 h-3 mr-1" />}
+                {goalStatus === 'due-today' && <Clock className="w-3 h-3 mr-1" />}
+                {getStatusText(goalStatus, goal)}
+              </Badge>
+            )}
           </div>
         )}
       </CardContent>

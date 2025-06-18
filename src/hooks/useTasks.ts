@@ -121,6 +121,10 @@ export const useTasks = (goalId?: string) => {
     };
   };
 
+  const getAllTasks = () => {
+    return tasks;
+  };
+
   useEffect(() => {
     if (goalId) {
       fetchTasks();
@@ -135,5 +139,6 @@ export const useTasks = (goalId?: string) => {
     updateTask,
     deleteTask,
     getTaskStats,
+    getAllTasks,
   };
 };
