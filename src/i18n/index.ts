@@ -1,5 +1,6 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
+import LanguageDetector from 'i18next-browser-languagedetector';
 
 const resources = {
   en: {
@@ -20,8 +21,8 @@ const resources = {
       activeGoals: "Active goals",
       starredGoals: "Starred goals",
       yourGoals: "Your Goals",
-      goalsInProgress: "{{count}} goal in progress",
-      goalsInProgress_plural: "{{count}} goals in progress",
+      goalsInProgress_one: "{{count}} goal in progress",
+      goalsInProgress_other: "{{count}} goals in progress",
       startYourJourney: "Start your journey",
       
       // Goal creation
@@ -86,6 +87,72 @@ const resources = {
       taskCreated: "Task created successfully!",
       taskUpdated: "Task updated successfully!",
       taskDeleted: "Task deleted successfully!",
+
+      // Language
+      language: "Language",
+      english: "English",
+      thai: "ไทย",
+
+      // New features
+      chooseTemplate: "Choose Template",
+      createCustom: "Create Custom",
+      myTasks: "My Tasks",
+      taskTemplates: "Task Templates",
+      suggestedTasks: "Suggested Tasks",
+      addAllTasks: "Add All Tasks",
+      noTemplatesAvailable: "No templates available",
+      templatesNotAvailable: "Templates are not available for this goal category yet.",
+
+      // Analytics
+      completionTrend: "Completion Trend",
+      monthlyProgress: "Monthly Progress",
+      goalsByCategory: "Goals by Category",
+      categoryPerformance: "Category Performance",
+      currentStreak: "Current Streak",
+      bestStreak: "Best Streak",
+      personalRecord: "Personal record",
+      keepItUp: "Keep it up!",
+
+      // Achievements
+      achievements: "Achievements",
+      totalPoints: "Total Points",
+      progressToLevel: "Progress to Level {{level}}",
+      maxLevel: "Max Level!",
+      achievementUnlocked: "Achievement Unlocked!",
+      dayStreak: "Day Streak",
+      goalsDone: "Goals Done",
+      tasksDone: "Tasks Done",
+
+      // Settings
+      notificationSettings: "Notification Settings",
+      browserNotifications: "Browser Notifications",
+      notificationDescription: "Get notified about upcoming deadlines and overdue goals",
+      enableNotifications: "Enable Notifications",
+      enableInBrowserSettings: "Enable in browser settings",
+      notificationTypes: "Notification Types",
+      notificationsEnabled: "Notifications enabled",
+      notificationsBlocked: "Notifications blocked",
+      permissionNeeded: "Permission needed",
+
+      // Data Management
+      exportYourData: "Export Your Data",
+      importYourData: "Import Your Data",
+      dataStatistics: "Data Statistics",
+      exportDescription: "Download all your goals and tasks as a JSON file for backup or transfer.",
+      importDescription: "Import goals from a previously exported JSON file or backup code.",
+      exportAsJSON: "Export as JSON",
+      copyBackupCode: "Copy Backup Code",
+      importFromFile: "Import from File",
+      backupCodeCopied: "Backup Code Copied",
+      backupCodeDescription: "Your backup code has been copied to clipboard.",
+
+      // Motivational quotes
+      motivationalQuote: "Motivational Quote",
+      newQuote: "New Quote",
+      quoteLiked: "Quote Liked!",
+      quoteMotivation: "Great choice! Keep that motivation going.",
+      quoteCopied: "Quote Copied!",
+      quoteDescription: "The quote has been copied to your clipboard.",
     }
   },
   th: {
@@ -106,8 +173,8 @@ const resources = {
       activeGoals: "เป้าหมายที่ดำเนินการอยู่",
       starredGoals: "เป้าหมายที่ติดดาว",
       yourGoals: "เป้าหมายของคุณ",
-      goalsInProgress: "{{count}} เป้าหมายที่ดำเนินการอยู่",
-      goalsInProgress_plural: "{{count}} เป้าหมายที่ดำเนินการอยู่",
+      goalsInProgress_one: "{{count}} เป้าหมายที่ดำเนินการอยู่",
+      goalsInProgress_other: "{{count}} เป้าหมายที่ดำเนินการอยู่",
       startYourJourney: "เริ่มต้นการเดินทางของคุณ",
       
       // Goal creation
@@ -172,19 +239,92 @@ const resources = {
       taskCreated: "สร้างงานเรียบร้อยแล้ว!",
       taskUpdated: "อัปเดตงานเรียบร้อยแล้ว!",
       taskDeleted: "ลบงานเรียบร้อยแล้ว!",
+
+      // Language
+      language: "ภาษา",
+      english: "English",
+      thai: "ไทย",
+
+      // New features
+      chooseTemplate: "เลือกเทมเพลต",
+      createCustom: "สร้างแบบกำหนดเอง",
+      myTasks: "งานของฉัน",
+      taskTemplates: "เทมเพลตงาน",
+      suggestedTasks: "งานที่แนะนำ",
+      addAllTasks: "เพิ่มงานทั้งหมด",
+      noTemplatesAvailable: "ไม่มีเทมเพลต",
+      templatesNotAvailable: "ยังไม่มีเทมเพลตสำหรับหมวดหมู่เป้าหมายนี้",
+
+      // Analytics
+      completionTrend: "แนวโน้มการเสร็จสิ้น",
+      monthlyProgress: "ความคืบหน้ารายเดือน",
+      goalsByCategory: "เป้าหมายตามหมวดหมู่",
+      categoryPerformance: "ประสิทธิภาพตามหมวดหมู่",
+      currentStreak: "สตรีคปัจจุบัน",
+      bestStreak: "สตรีคที่ดีที่สุด",
+      personalRecord: "สถิติส่วนตัว",
+      keepItUp: "ทำต่อไป!",
+
+      // Achievements
+      achievements: "ความสำเร็จ",
+      totalPoints: "คะแนนรวม",
+      progressToLevel: "ความคืบหน้าสู่เลเวล {{level}}",
+      maxLevel: "เลเวลสูงสุด!",
+      achievementUnlocked: "ปลดล็อกความสำเร็จแล้ว!",
+      dayStreak: "สตรีควัน",
+      goalsDone: "เป้าหมายที่เสร็จ",
+      tasksDone: "งานที่เสร็จ",
+
+      // Settings
+      notificationSettings: "การตั้งค่าการแจ้งเตือน",
+      browserNotifications: "การแจ้งเตือนของเบราว์เซอร์",
+      notificationDescription: "รับการแจ้งเตือนเกี่ยวกับกำหนดเวลาที่ใกล้มาถึงและเป้าหมายที่เกินกำหนด",
+      enableNotifications: "เปิดใช้การแจ้งเตือน",
+      enableInBrowserSettings: "เปิดใช้ในการตั้งค่าเบราว์เซอร์",
+      notificationTypes: "ประเภทการแจ้งเตือน",
+      notificationsEnabled: "เปิดใช้การแจ้งเตือนแล้ว",
+      notificationsBlocked: "การแจ้งเตือนถูกบล็อก",
+      permissionNeeded: "ต้องการสิทธิ์",
+
+      // Data Management
+      exportYourData: "ส่งออกข้อมูลของคุณ",
+      importYourData: "นำเข้าข้อมูลของคุณ",
+      dataStatistics: "สถิติข้อมูล",
+      exportDescription: "ดาวน์โหลดเป้าหมายและงานทั้งหมดของคุณเป็นไฟล์ JSON สำหรับสำรองข้อมูลหรือถ่ายโอน",
+      importDescription: "นำเข้าเป้าหมายจากไฟล์ JSON ที่ส่งออกไว้ก่อนหน้านี้หรือรหัสสำรองข้อมูล",
+      exportAsJSON: "ส่งออกเป็น JSON",
+      copyBackupCode: "คัดลอกรหัสสำรองข้อมูล",
+      importFromFile: "นำเข้าจากไฟล์",
+      backupCodeCopied: "คัดลอกรหัสสำรองข้อมูลแล้ว",
+      backupCodeDescription: "รหัสสำรองข้อมูลของคุณถูกคัดลอกไปยังคลิปบอร์ดแล้ว",
+
+      // Motivational quotes
+      motivationalQuote: "คำคมสร้างแรงบันดาลใจ",
+      newQuote: "คำคมใหม่",
+      quoteLiked: "ถูกใจคำคม!",
+      quoteMotivation: "ตัวเลือกที่ดี! รักษาแรงบันดาลใจนั้นไว้!",
+      quoteCopied: "คัดลอกคำคมแล้ว!",
+      quoteDescription: "คำคมถูกคัดลอกไปยังคลิปบอร์ดของคุณแล้ว",
     }
   }
 };
 
 i18n
+  .use(LanguageDetector)
   .use(initReactI18next)
   .init({
     resources,
-    lng: 'en',
     fallbackLng: 'en',
+    debug: false,
+
     interpolation: {
-      escapeValue: false
-    }
+      escapeValue: false, // React already does escaping
+    },
+
+    detection: {
+      order: ['localStorage', 'navigator', 'htmlTag'],
+      caches: ['localStorage'],
+    },
   });
 
 export default i18n;

@@ -10,15 +10,20 @@ export const useTasks = (goalId?: string) => {
   const { toast } = useToast();
 
   const fetchTasks = async (targetGoalId?: string) => {
-    if (!targetGoalId && !goalId) return;
-
     try {
       setLoading(true);
-      const { data, error } = await supabase
-        .from('tasks')
-        .select('*')
-        .eq('goal_id', targetGoalId || goalId)
-        .order('position', { ascending: true });
+      let query = supabase.from('tasks').select('*');
+
+      // If targetGoalId is provided, filter by that
+      // If goalId is provided (from hook parameter), filter by that
+      // Otherwise, fetch all tasks
+      if (targetGoalId) {
+        query = query.eq('goal_id', targetGoalId);
+      } else if (goalId) {
+        query = query.eq('goal_id', goalId);
+      }
+
+      const { data, error } = await query.order('position', { ascending: true });
 
       if (error) throw error;
       setTasks(data || []);
@@ -125,16 +130,20 @@ export const useTasks = (goalId?: string) => {
     return tasks;
   };
 
+  const fetchAllTasks = async () => {
+    await fetchTasks(); // This will fetch all tasks since no goalId is specified
+  };
+
   useEffect(() => {
-    if (goalId) {
-      fetchTasks();
-    }
+    // Always fetch tasks - either for specific goal or all tasks
+    fetchTasks();
   }, [goalId]);
 
   return {
     tasks,
     loading,
     fetchTasks,
+    fetchAllTasks,
     createTask,
     updateTask,
     deleteTask,

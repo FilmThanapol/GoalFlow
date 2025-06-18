@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import Header from './Header';
 import GoalCard from '@/components/goals/GoalCard';
 import CreateGoalDialog from '@/components/goals/CreateGoalDialog';
@@ -10,6 +11,7 @@ import GamificationPanel from '@/components/gamification/GamificationPanel';
 import DataManagement from '@/components/settings/DataManagement';
 import DailyQuote from '@/components/motivation/DailyQuote';
 import FloatingActionButton from '@/components/ui/floating-action-button';
+
 import { useGoals } from '@/hooks/useGoals';
 import { useTasks } from '@/hooks/useTasks';
 import { useNotifications } from '@/hooks/useNotifications';
@@ -22,8 +24,9 @@ import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const Dashboard = () => {
+  const { t } = useTranslation();
   const { goals, loading, createGoal, updateGoal, deleteGoal } = useGoals();
-  const { getTaskStats, getAllTasks } = useTasks();
+  const { getTaskStats, getAllTasks, fetchAllTasks } = useTasks();
   const allTasks = getAllTasks();
   const completedTasksCount = allTasks.filter(task => task.is_completed).length;
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
@@ -31,32 +34,7 @@ const Dashboard = () => {
   const [selectedGoalForTasks, setSelectedGoalForTasks] = useState<Goal | null>(null);
   const [activeTab, setActiveTab] = useState('dashboard');
 
-  // Temporary fallback translations until i18n is properly loaded
-  const t = (key: string) => {
-    const translations: Record<string, string> = {
-      welcome: "Welcome back!",
-      trackProgress: "Track your progress and achieve your goals",
-      totalGoals: "Total Goals",
-      completed: "Completed",
-      inProgress: "In Progress",
-      favorites: "Favorites",
-      allGoals: "All your goals",
-      activeGoals: "Active goals",
-      starredGoals: "Starred goals",
-      yourGoals: "Your Goals",
-      goalsInProgress: "goals in progress",
-      startYourJourney: "Start your journey",
-      createGoal: "Create Goal",
-      createYourFirstGoal: "Create Your First Goal",
-      readyToAchieve: "Ready to achieve something great?",
-      firstGoalDescription: "Start your journey by creating your first goal. Break it down into manageable tasks and track your progress along the way!",
-      dashboard: "Dashboard",
-      analytics: "Analytics",
-      achievements: "Achievements",
-      settings: "Settings"
-    };
-    return translations[key] || key;
-  };
+
 
   const handleCreateGoal = async (goalData: Omit<Goal, 'id' | 'user_id' | 'created_at' | 'updated_at'>) => {
     await createGoal(goalData);
@@ -73,6 +51,11 @@ const Dashboard = () => {
   const handleToggleFavorite = async (goalId: string, isFavorite: boolean) => {
     await updateGoal(goalId, { is_favorite: isFavorite });
   };
+
+  // Fetch all tasks when component mounts
+  useEffect(() => {
+    fetchAllTasks();
+  }, []);
 
   // Keyboard shortcuts
   useEffect(() => {
@@ -256,7 +239,7 @@ const Dashboard = () => {
                 <p className="text-gray-600 dark:text-gray-300 text-sm mt-1 flex items-center gap-2">
                   {goals.length > 0 ? (
                     <>
-                      <span>{goals.length} {t('goalsInProgress')}</span>
+                      <span>{t('goalsInProgress', { count: goals.length })}</span>
                       <span>🚀</span>
                     </>
                   ) : (
