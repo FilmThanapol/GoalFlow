@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Goal, Task } from '@/types/goal';
-import { useTasks } from '@/hooks/useTasks';
+import { useTasksContext } from '@/contexts/TasksContext';
 import { Plus, Trash2, GripVertical, Clock, AlertCircle, CheckCircle2, Circle } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -24,9 +24,12 @@ const TasksDialog: React.FC<TasksDialogProps> = ({
   onOpenChange,
   goal,
 }) => {
-  const { tasks, loading, fetchTasks, createTask, updateTask, deleteTask } = useTasks();
+  const { tasks: allTasks, loading, fetchTasks, createTask, updateTask, deleteTask } = useTasksContext();
   const [newTaskTitle, setNewTaskTitle] = useState('');
   const [selectedTemplate, setSelectedTemplate] = useState<string>('');
+
+  // Filter tasks for this specific goal
+  const tasks = allTasks.filter(task => task.goal_id === goal.id);
 
   // Get template tasks for the current goal category
   const relevantTemplate = goalTemplates.find(t => t.category === goal.category);

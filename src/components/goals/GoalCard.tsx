@@ -123,11 +123,17 @@ const GoalCard: React.FC<GoalCardProps> = ({
         <div className="space-y-2">
           <div className="flex justify-between text-sm">
             <span className="text-gray-600 dark:text-gray-300">Progress</span>
-            <span className="font-medium">{completedTasks}/{totalTasks} tasks</span>
+            <span className="font-medium transition-all duration-300">{completedTasks}/{totalTasks} tasks</span>
           </div>
-          <Progress value={progress} className="h-2" />
-          <div className="text-xs text-gray-500">
+          <Progress
+            value={progress}
+            className="h-2 transition-all duration-500 ease-out"
+          />
+          <div className="text-xs text-gray-500 transition-all duration-300">
             {Math.round(progress)}% complete
+            {progress === 100 && (
+              <span className="ml-2 text-green-600 animate-pulse">🎉</span>
+            )}
           </div>
         </div>
         

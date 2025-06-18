@@ -11,10 +11,10 @@ import GamificationPanel from '@/components/gamification/GamificationPanel';
 import DataManagement from '@/components/settings/DataManagement';
 import DailyQuote from '@/components/motivation/DailyQuote';
 import FloatingActionButton from '@/components/ui/floating-action-button';
+import ErrorBoundary from '@/components/ErrorBoundary';
+import { useTasksContext } from '@/contexts/TasksContext';
 
 import { useGoals } from '@/hooks/useGoals';
-import { useTasks } from '@/hooks/useTasks';
-import { useNotifications } from '@/hooks/useNotifications';
 import { Goal } from '@/types/goal';
 import { Button } from '@/components/ui/button';
 import { Plus, Target, TrendingUp, CheckCircle, Calendar, Star, Trophy, Zap, BarChart3, Settings, Award, Sparkles, Heart } from 'lucide-react';
@@ -26,13 +26,20 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 const Dashboard = () => {
   const { t } = useTranslation();
   const { goals, loading, createGoal, updateGoal, deleteGoal } = useGoals();
-  const { getTaskStats, getAllTasks, fetchAllTasks } = useTasks();
+  const { getTaskStats, getAllTasks, fetchAllTasks } = useTasksContext();
   const allTasks = getAllTasks();
   const completedTasksCount = allTasks.filter(task => task.is_completed).length;
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [editingGoal, setEditingGoal] = useState<Goal | null>(null);
   const [selectedGoalForTasks, setSelectedGoalForTasks] = useState<Goal | null>(null);
-  const [activeTab, setActiveTab] = useState('dashboard');
+  const [activeTab, setActiveTab] = useState(() => {
+    // Get saved tab from localStorage or default to 'dashboard'
+    try {
+      return localStorage.getItem('goalflow-active-tab') || 'dashboard';
+    } catch {
+      return 'dashboard';
+    }
+  });
 
 
 
@@ -57,6 +64,26 @@ const Dashboard = () => {
     fetchAllTasks();
   }, []);
 
+  // Save active tab to localStorage
+  useEffect(() => {
+    try {
+      localStorage.setItem('goalflow-active-tab', activeTab);
+    } catch (error) {
+      console.warn('Failed to save active tab to localStorage:', error);
+    }
+  }, [activeTab]);
+
+  // Handle tab change with validation
+  const handleTabChange = (newTab: string) => {
+    const validTabs = ['dashboard', 'analytics', 'achievements', 'settings'];
+    if (validTabs.includes(newTab)) {
+      setActiveTab(newTab);
+    } else {
+      console.warn('Invalid tab:', newTab);
+      setActiveTab('dashboard');
+    }
+  };
+
   // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -77,10 +104,21 @@ const Dashboard = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
+  // Calculate stats with real-time task completion data
   const stats = {
     total: goals.length,
-    completed: goals.filter(goal => goal.is_completed).length,
-    inProgress: goals.filter(goal => !goal.is_completed).length,
+    completed: goals.filter(goal => {
+      const taskStats = getTaskStats(goal.id);
+      // A goal is completed if it's marked as completed OR all tasks are done
+      const isCompleted = goal.is_completed || (taskStats.total > 0 && taskStats.completed === taskStats.total);
+      return isCompleted;
+    }).length,
+    inProgress: goals.filter(goal => {
+      const taskStats = getTaskStats(goal.id);
+      // A goal is in progress if it's not completed and has tasks
+      const isCompleted = goal.is_completed || (taskStats.total > 0 && taskStats.completed === taskStats.total);
+      return !isCompleted;
+    }).length,
     favorites: goals.filter(goal => goal.is_favorite).length,
   };
 
@@ -133,7 +171,7 @@ const Dashboard = () => {
         </div>
 
         {/* Tabs for Dashboard, Analytics, Achievements, and Settings */}
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
           <TabsList className="grid w-full grid-cols-4 mb-8 bg-white/70 dark:bg-gray-800/70 backdrop-blur-md border border-pink-200 dark:border-purple-700 rounded-2xl p-1">
             <TabsTrigger value="dashboard" className="flex items-center gap-2 rounded-xl data-[state=active]:bg-gradient-to-r data-[state=active]:from-pink-500 data-[state=active]:to-purple-500 data-[state=active]:text-white">
               <Target className="w-4 h-4" />
@@ -318,11 +356,23 @@ const Dashboard = () => {
           </TabsContent>
 
           <TabsContent value="analytics" className="space-y-8">
-            <AnalyticsDashboard goals={goals} />
+            <ErrorBoundary fallback={
+              <div className="text-center py-8">
+                <p className="text-gray-500">Failed to load analytics. Please try refreshing the page.</p>
+              </div>
+            }>
+              <AnalyticsDashboard goals={goals} />
+            </ErrorBoundary>
           </TabsContent>
 
           <TabsContent value="achievements" className="space-y-8">
-            <GamificationPanel goals={goals} completedTasks={completedTasksCount} />
+            <ErrorBoundary fallback={
+              <div className="text-center py-8">
+                <p className="text-gray-500">Failed to load achievements. Please try refreshing the page.</p>
+              </div>
+            }>
+              <GamificationPanel goals={goals} completedTasks={completedTasksCount} />
+            </ErrorBoundary>
           </TabsContent>
 
           <TabsContent value="settings" className="space-y-8">
