@@ -110,8 +110,8 @@ const Header = () => {
                   <LogOut className="w-4 h-4 mr-2" />
                   {t('signOut')}
                 </DropdownMenuItem>
-              </DropdownMenu>
-            </div>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </div>
