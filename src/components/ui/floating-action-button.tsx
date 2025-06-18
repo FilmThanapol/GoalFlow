@@ -1,6 +1,7 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Plus, Target, BarChart3, Award, X } from 'lucide-react';
+import { Plus, Target, BarChart3, Award, X, Sparkles } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface FloatingActionButtonProps {
@@ -32,26 +33,26 @@ const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
       )}>
         <Button
           onClick={() => handleAction(onCreateGoal)}
-          className="w-12 h-12 rounded-full bg-blue-600 hover:bg-blue-700 shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-110"
+          className="w-14 h-14 rounded-full bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600 shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-110 border-2 border-white dark:border-gray-800"
           size="icon"
         >
-          <Target className="w-5 h-5" />
+          <Target className="w-6 h-6" />
         </Button>
         
         <Button
           onClick={() => handleAction(onOpenAnalytics)}
-          className="w-12 h-12 rounded-full bg-green-600 hover:bg-green-700 shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-110"
+          className="w-14 h-14 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-110 border-2 border-white dark:border-gray-800"
           size="icon"
         >
-          <BarChart3 className="w-5 h-5" />
+          <BarChart3 className="w-6 h-6" />
         </Button>
         
         <Button
           onClick={() => handleAction(onOpenAchievements)}
-          className="w-12 h-12 rounded-full bg-purple-600 hover:bg-purple-700 shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-110"
+          className="w-14 h-14 rounded-full bg-gradient-to-r from-blue-500 to-green-500 hover:from-blue-600 hover:to-green-600 shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-110 border-2 border-white dark:border-gray-800"
           size="icon"
         >
-          <Award className="w-5 h-5" />
+          <Award className="w-6 h-6" />
         </Button>
       </div>
 
@@ -59,24 +60,27 @@ const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
       <Button
         onClick={toggleMenu}
         className={cn(
-          "w-14 h-14 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110",
+          "w-16 h-16 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 border-2 border-white dark:border-gray-800",
           isOpen 
-            ? "bg-red-600 hover:bg-red-700 rotate-45" 
-            : "bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700"
+            ? "bg-gradient-to-r from-red-400 to-pink-500 hover:from-red-500 hover:to-pink-600 rotate-45" 
+            : "bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 hover:from-pink-600 hover:via-purple-600 hover:to-blue-600"
         )}
         size="icon"
       >
         {isOpen ? (
-          <X className="w-6 h-6" />
+          <X className="w-7 h-7" />
         ) : (
-          <Plus className="w-6 h-6" />
+          <div className="relative">
+            <Plus className="w-7 h-7" />
+            <Sparkles className="w-3 h-3 absolute -top-1 -right-1 text-pink-200 animate-pulse" />
+          </div>
         )}
       </Button>
 
       {/* Backdrop */}
       {isOpen && (
         <div 
-          className="fixed inset-0 bg-black/20 backdrop-blur-sm -z-10"
+          className="fixed inset-0 bg-black/10 backdrop-blur-sm -z-10"
           onClick={() => setIsOpen(false)}
         />
       )}
