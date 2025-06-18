@@ -10,15 +10,22 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator 
 } from '@/components/ui/dropdown-menu';
-import { Target, LogOut, Settings, Moon, Sun } from 'lucide-react';
+import { Target, LogOut, Settings, Moon, Sun, Globe } from 'lucide-react';
 import { useTheme } from 'next-themes';
-import { useTranslation } from 'react-i18next';
-import LanguageSwitcher from '@/components/ui/language-switcher';
 
 const Header = () => {
   const { user, signOut } = useAuth();
   const { theme, setTheme } = useTheme();
-  const { t } = useTranslation();
+
+  // Temporary fallback translations until i18n is properly loaded
+  const t = (key: string) => {
+    const translations: Record<string, string> = {
+      goalflow: "GoalFlow",
+      settings: "Settings",
+      signOut: "Sign out"
+    };
+    return translations[key] || key;
+  };
 
   const handleSignOut = async () => {
     try {
@@ -53,7 +60,13 @@ const Header = () => {
           </div>
 
           <div className="flex items-center gap-2">
-            <LanguageSwitcher />
+            <Button
+              variant="ghost"
+              size="icon"
+              className="rounded-full hover:bg-pink-100 dark:hover:bg-pink-900/20 transition-colors"
+            >
+              <Globe className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+            </Button>
             
             <Button
               variant="ghost"
@@ -97,8 +110,8 @@ const Header = () => {
                   <LogOut className="w-4 h-4 mr-2" />
                   {t('signOut')}
                 </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+              </DropdownMenu>
+            </div>
           </div>
         </div>
       </div>

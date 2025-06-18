@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import Header from './Header';
 import GoalCard from '@/components/goals/GoalCard';
@@ -21,7 +20,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useTranslation } from 'react-i18next';
 
 const Dashboard = () => {
   const { goals, loading, createGoal, updateGoal, deleteGoal } = useGoals();
@@ -32,7 +30,33 @@ const Dashboard = () => {
   const [editingGoal, setEditingGoal] = useState<Goal | null>(null);
   const [selectedGoalForTasks, setSelectedGoalForTasks] = useState<Goal | null>(null);
   const [activeTab, setActiveTab] = useState('dashboard');
-  const { t } = useTranslation();
+
+  // Temporary fallback translations until i18n is properly loaded
+  const t = (key: string) => {
+    const translations: Record<string, string> = {
+      welcome: "Welcome back!",
+      trackProgress: "Track your progress and achieve your goals",
+      totalGoals: "Total Goals",
+      completed: "Completed",
+      inProgress: "In Progress",
+      favorites: "Favorites",
+      allGoals: "All your goals",
+      activeGoals: "Active goals",
+      starredGoals: "Starred goals",
+      yourGoals: "Your Goals",
+      goalsInProgress: "goals in progress",
+      startYourJourney: "Start your journey",
+      createGoal: "Create Goal",
+      createYourFirstGoal: "Create Your First Goal",
+      readyToAchieve: "Ready to achieve something great?",
+      firstGoalDescription: "Start your journey by creating your first goal. Break it down into manageable tasks and track your progress along the way!",
+      dashboard: "Dashboard",
+      analytics: "Analytics",
+      achievements: "Achievements",
+      settings: "Settings"
+    };
+    return translations[key] || key;
+  };
 
   const handleCreateGoal = async (goalData: Omit<Goal, 'id' | 'user_id' | 'created_at' | 'updated_at'>) => {
     await createGoal(goalData);
@@ -232,7 +256,7 @@ const Dashboard = () => {
                 <p className="text-gray-600 dark:text-gray-300 text-sm mt-1 flex items-center gap-2">
                   {goals.length > 0 ? (
                     <>
-                      <span>{t('goalsInProgress', { count: goals.length })}</span>
+                      <span>{goals.length} {t('goalsInProgress')}</span>
                       <span>🚀</span>
                     </>
                   ) : (
